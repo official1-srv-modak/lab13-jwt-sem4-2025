@@ -1,0 +1,82 @@
+openapi: 3.0.0
+info:
+  title: Banking Transaction History Viewer API
+  version: 1.0.0
+paths:
+  /auth/login:
+    post:
+      summary: Login to receive JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthRequest'
+      responses:
+        '200':
+          description: JWT token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+  /transactions/me:
+    get:
+      summary: Get own transactions
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Transaction list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transaction'
+  /transactions/all:
+    get:
+      summary: Admin can view all transactions
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: All transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transaction'
+components:
+  schemas:
+    AuthRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        amount:
+          type: number
+        description:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
